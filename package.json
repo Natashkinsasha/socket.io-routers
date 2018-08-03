@@ -1,0 +1,35 @@
+{
+  "name": "socket.io-routers",
+  "version": "0.0.1",
+  "description": "Router to use with socket.io",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "rimraf ./build && babel src --out-dir build",
+    "test": "mocha test/**/*.js --require babel-register --timeout 10000"
+  },
+  "keywords": [
+    "router",
+    "socket.io",
+    "websocket"
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "cross-env": "^5.2.0",
+    "mocha": "^5.2.0",
+    "rimraf": "^2.6.2",
+    "socket.io-client": "^2.1.1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^2.1.1",
+    "utils-merge": "^1.0.1",
+    "wildcard": "^1.1.2"
+  }
+}
