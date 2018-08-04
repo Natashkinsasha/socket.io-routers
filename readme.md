@@ -27,7 +27,7 @@ const Router = require('socket.io-routers');
 const Server = require('socket.io');
 
 const io = Server();
-const router = new Router();
+const router = Router();
 
 router.onConnect((io, socket) => {
     doSmth();
