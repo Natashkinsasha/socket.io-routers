@@ -59,10 +59,12 @@ proto.use = function (pathOrFunc, func) {
 
 proto.onConnect = function (func) {
     this.con = func;
+    return this;
 }
 
 proto.onDisconnect = function (func) {
     this.dis = func;
+    return this;
 }
 
 

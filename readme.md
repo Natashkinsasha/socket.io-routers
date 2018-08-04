@@ -26,7 +26,7 @@ This library is quite fresh, and maybe has bugs. Write me an **email** to *natas
 const Router = require('socket.io-routers');
 const Server = require('socket.io');
 
-const io = new Server();
+const io = Server();
 const router = new Router();
 
 router.onConnect((io, socket) => {

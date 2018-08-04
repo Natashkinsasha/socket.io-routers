@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "module": "commonjs",
+    "target": "es2017",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "inlineSourceMap": true,
+    "moduleResolution": "Node",
+    "removeComments": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}

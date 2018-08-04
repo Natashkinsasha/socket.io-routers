@@ -1,17 +1,18 @@
-import Server from "socket.io";
-import client from 'socket.io-client';
-import chai from "chai";
-import SocketRouter from "../src/index";
+import * as Server from "socket.io";
+import * as client from 'socket.io-client';
+import * as chai from "chai";
+import * as SocketRouter from "socket.io-routers";
+
 
 describe("Test Router", () => {
 
     const expect = chai.expect;
 
     describe('use', () => {
-        let io;
-        let socket;
+        let io: SocketIO.Server;
+        let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            io = new Server();
+            io = Server();
             io.listen(3000);
         });
         afterEach(() => {
@@ -26,7 +27,7 @@ describe("Test Router", () => {
             });
             io.use(router);
             socket = client("http://localhost:3000");
-            socket.emit("test", "test", (msg) => {
+            socket.emit("test", "test", (msg: string) => {
                 expect(msg).to.be.equal("test");
                 done();
             });
@@ -42,7 +43,7 @@ describe("Test Router", () => {
             });
             io.use(router);
             socket = client("http://localhost:3000");
-            socket.emit("test", "test", (msg) => {
+            socket.emit("test", "test", (msg: string) => {
                 expect(msg).to.be.equal("error");
                 done();
             });
@@ -50,10 +51,10 @@ describe("Test Router", () => {
     });
 
     describe('onConnect', () => {
-        let io;
-        let socket;
+        let io: SocketIO.Server;
+        let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            io = new Server();
+            io = Server();
             io.listen(3000);
         });
         afterEach(() => {
@@ -68,7 +69,7 @@ describe("Test Router", () => {
             });
             io.use(router);
             socket = client("http://localhost:3000");
-            socket.on("test", (msg) => {
+            socket.on("test", (msg: string) => {
                 expect(msg).to.be.equal("test");
                 done();
             });
@@ -76,10 +77,10 @@ describe("Test Router", () => {
     });
 
     describe('onDisconnect', () => {
-        let io;
-        let socket;
+        let io: SocketIO.Server;
+        let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            io = new Server();
+            io = Server();
             io.listen(3000);
         });
         afterEach(() => {
@@ -101,3 +102,4 @@ describe("Test Router", () => {
 
 
 });
+
