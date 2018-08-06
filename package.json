@@ -1,6 +1,6 @@
 {
   "name": "socket.io-routers",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Router to use with socket.io",
   "main": "build/index.js",
   "scripts": {
@@ -12,6 +12,14 @@
     "socket.io",
     "websocket"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Natashkinsasha/socket.io-routers"
+  },
+  "bugs": {
+    "url": "https://github.com/Natashkinsasha/socket.io-routers/issues",
+    "email": "natashkinsasga@gmail.com"
+  },
   "dependencies": {
     "socket.io": "^2.1.1",
     "utils-merge": "^1.0.1",
