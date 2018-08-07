@@ -29,11 +29,11 @@ const Server = require('socket.io');
 const io = Server();
 const router = Router();
 
-router.onConnect((io, socket) => {
+router.onConnect((io, socket, next) => {
     doSmth();
 });
 
-router.onDisconnect((io, socket, reason) => {
+router.onDisconnect((io, socket, reason, next) => {
     doSmth();
 });
 
@@ -46,7 +46,7 @@ router.use("test", (io, socket, path, params, ack, next) => {
             next(err);
         })
 });
-router.use((io, socket, path, params, ack, err) => {
+router.use((io, socket, err, ack) => {
     socket.emit("error", err.message)
 });
 io.use(router);

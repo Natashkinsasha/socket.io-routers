@@ -1,11 +1,11 @@
 {
   "name": "socket.io-routers",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "Router to use with socket.io",
   "main": "build/index.js",
   "scripts": {
     "build": "rimraf ./build && babel src --out-dir build",
-    "test": "npm run build && mocha test/**/*.js --require babel-register --timeout 10000 && mocha test/**/*.ts --require ts-node/register"
+    "test": "npm run build && mocha test/**/*.ts --require ts-node/register"
   },
   "keywords": [
     "router",

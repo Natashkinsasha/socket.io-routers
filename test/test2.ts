@@ -1,7 +1,9 @@
+import router from "socket.io-routers";
 import * as Server from "socket.io";
 import * as client from 'socket.io-client';
 import * as chai from "chai";
-import * as SocketRouter from "socket.io-routers";
+import {Socket} from "socket.io";
+
 
 
 describe("Test Router", () => {
@@ -21,11 +23,11 @@ describe("Test Router", () => {
         });
 
         it("1", (done) => {
-            const router = SocketRouter();
-            router.use("test", (io, socket, path, params, ack, next) => {
-                ack(params[0]);
+            const testRouter: router.Router = router();
+            testRouter.use("test", (io: SocketIO.Server, socket: Socket, path: string, params: any[], ack: ((...params: any[]) => any) | undefined, next: (err?: any) => any) => {
+                ack && ack(params[0]);
             });
-            io.use(router);
+            io.use(testRouter);
             socket = client("http://localhost:3000");
             socket.emit("test", "test", (msg: string) => {
                 expect(msg).to.be.equal("test");
@@ -34,14 +36,14 @@ describe("Test Router", () => {
         });
 
         it("2", (done) => {
-            const router = SocketRouter();
-            router.use("test", (io, socket, path, params, ack, next) => {
+            const testRouter = router();
+            testRouter.use("test", (io: SocketIO.Server, socket: Socket, path: string, params: any[], ack: ((...params: any[]) => any) | undefined, next: (err?: any) => any) => {
                 next(new Error('error'));
             });
-            router.use((io, socket, path, params, ack, err) => {
-                ack(err.message);
+            testRouter.use((io: SocketIO.Server, socket: Socket, err: any, ack: ((...params: any[]) => any) | undefined) => {
+                ack && ack(err.message);
             });
-            io.use(router);
+            io.use(testRouter);
             socket = client("http://localhost:3000");
             socket.emit("test", "test", (msg: string) => {
                 expect(msg).to.be.equal("error");
@@ -63,11 +65,11 @@ describe("Test Router", () => {
         });
 
         it("1", (done) => {
-            const router = SocketRouter();
-            router.onConnect((io, socket) => {
+            const testRouter = router();
+            testRouter.onConnect((io: SocketIO.Server, socket: Socket, next: (err?: any) => any) => {
                 socket.emit("test", "test")
             });
-            io.use(router);
+            io.use(testRouter);
             socket = client("http://localhost:3000");
             socket.on("test", (msg: string) => {
                 expect(msg).to.be.equal("test");
@@ -89,11 +91,11 @@ describe("Test Router", () => {
 
         it("1", (done) => {
             socket = client("http://localhost:3000");
-            const router = SocketRouter();
-            router.onDisconnect((io, socket) => {
+            const testRouter = router();
+            testRouter.onDisconnect((io: SocketIO.Server, socket: Socket, reason: string | undefined, next: (err?: any) => any) => {
                 done();
             });
-            io.use(router);
+            io.use(testRouter);
             socket.on("connect", () => {
                 socket.close();
             });

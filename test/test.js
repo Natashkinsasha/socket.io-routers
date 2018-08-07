@@ -37,7 +37,7 @@ describe("Test Router", () => {
             router.use("test", (io, socket, path, params, ack, next) => {
                 next(new Error('error'));
             });
-            router.use((io, socket, path, params, ack, err) => {
+            router.use((io, socket, err, ack) => {
                 ack(err.message);
             });
             io.use(router);
@@ -73,6 +73,18 @@ describe("Test Router", () => {
                 done();
             });
         });
+
+        it("2", (done) => {
+            const router = SocketRouter();
+            router.onConnect((io, socket, next) => {
+                next(new Error('error'));
+            });
+            io.use(router);
+            socket = client("http://localhost:3000");
+            router.use((io, socket, err) => {
+                done();
+            });
+        });
     });
 
     describe('onDisconnect', () => {
@@ -95,6 +107,21 @@ describe("Test Router", () => {
             io.use(router);
             socket.on("connect", () => {
                 socket.close();
+            });
+        });
+
+        it("2", (done) => {
+            const router = SocketRouter();
+            router.onDisconnect((io, socket, reason, next) => {
+                next(new Error('error'));
+            });
+            io.use(router);
+            socket = client("http://localhost:3000");
+            socket.on("connect", () => {
+                socket.close();
+            });
+            router.use((io, socket, err) => {
+                done();
             });
         });
     });

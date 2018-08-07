@@ -5,13 +5,13 @@ let proto = {};
 
 export default function Router() {
     function router(socket, next) {
-        router.connect(socket.server, socket);
+        router.connect(socket.server, socket, router.next(socket.server, socket));
         socket.use(function (packet, next) {
             router.handle(packet, socket, socket.server);
             next();
         });
         socket.on("disconnect", (reason) => {
-            router.disconnect(socket.server, socket, reason);
+            router.disconnect(socket.server, socket, reason, router.next(socket.server, socket));
         });
         next();
     }
@@ -26,21 +26,24 @@ proto.handle = function (packet, socket, io) {
     const ack = last instanceof Function ? last : undefined;
     const params = ack ? packet.slice(1, packet.length - 1) : packet.slice(1, packet.length);
     const findPath = this.routers && wildcard(path, Array.from(this.routers.keys()))[0];
-    const next = (err) => {
+    findPath && this.routers.get(findPath)(io, socket, path, params, ack, this.next(socket.server, socket, ack));
+}
+
+proto.next = function (io, socket, ack) {
+    return (err) => {
         if(err){
-            this.errorHandler && this.errorHandler(io, socket, path, params, ack, err);
+            this.errorHandler && this.errorHandler(io, socket, err, ack);
         }
     }
-    findPath && this.routers.get(findPath)(io, socket, path, params, ack, next);
 }
 
-proto.connect = function (io, socket) {
-    this.con && this.con(io, socket);
+proto.connect = function (io, socket, next) {
+    this.con && this.con(io, socket, next);
 }
 
-proto.disconnect = function (io, socket, reason) {
+proto.disconnect = function (io, socket, reason, next) {
 
-    this.dis && this.dis(io, socket, reason);
+    this.dis && this.dis(io, socket, reason, next);
 }
 
 proto.use = function (pathOrFunc, func) {

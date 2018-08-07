@@ -7,12 +7,12 @@ declare namespace router {
     export interface Router {
         (socket: Socket, fn: (err?: any) => void): void
 
-        use(pathOrFunc: string | ((io: Server, socket: Socket, path: string, params: any[], ack: (params?: any[]) => any, err: any) => any), func?: (io: Server, socket: Socket, path: string, params: any[], ack: (params?: any[]) => any, next: (err?: any) => any) => any): Router;
+        use(pathOrFunc: string | ((io: Server, socket: Socket, path: string, params: any[], ack: ((...params: any[]) => any) | undefined, err: any) => any), func?: (io: Server, socket: Socket, path: string, params: any[], ack: (params?: any[]) => any, next: (err?: any) => any) => any): Router;
 
-        onConnect(func: (io: Server, socket: Socket) => any): Router;
+        onConnect(func: (io: Server, socket: Socket, next: (err?: any) => any) => any): Router;
 
-        onDisconnect(func: (io: Server, socket: Socket, reason: string | undefined) => any): Router;
+        onDisconnect(func: (io: Server, socket: Socket, reason: string | undefined, next: (err?: any) => any) => any): Router;
     }
 }
 
-export = router;
+export default router;
