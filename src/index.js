@@ -25,7 +25,7 @@ proto.handle = function (packet, socket, io) {
     const last = packet[packet.length - 1];
     const ack = last instanceof Function ? last : undefined;
     const params = ack ? packet.slice(1, packet.length - 1) : packet.slice(1, packet.length);
-    const findPath = this.routers && wildcard(path, Array.from(this.routers.keys()))[0];
+    const findPath = this.routers && wildcard(path, this.paths)[0];
     findPath && this.routers.get(findPath)(io, socket, path, params, ack, this.next(socket.server, socket, ack));
 }
 
@@ -53,8 +53,9 @@ proto.use = function (pathOrFunc, func) {
         const path = pathOrFunc;
         if (!this.routers) {
             this.routers = new Map();
+            this.paths = [];
         }
-
+        this.paths.push(path);
         this.routers.set(path, func);
     }
     return this;
