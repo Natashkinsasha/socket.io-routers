@@ -1,6 +1,6 @@
 {
   "name": "socket.io-routers",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Router to use with socket.io",
   "main": "build/index.js",
   "scripts": {
