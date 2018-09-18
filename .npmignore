@@ -6,4 +6,3 @@ package-lock.json
 .gitignore
 .babelrc
 tsconfig.ts
-types
