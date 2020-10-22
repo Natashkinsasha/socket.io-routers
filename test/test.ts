@@ -1,8 +1,8 @@
-import router from "socket.io-routers";
-import * as Server from "socket.io";
+import {Ack, createRouter, Next, Reason, RouterContext} from "../src";
+import * as IO from "socket.io";
 import * as client from 'socket.io-client';
 import * as chai from "chai";
-import {Socket} from "socket.io";
+import {Socket, Server} from "socket.io";
 
 
 
@@ -11,23 +11,23 @@ describe("Test Router", () => {
     const expect = chai.expect;
 
     describe('use', () => {
-        let io: SocketIO.Server;
+        let server: Server;
         let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            io = Server();
-            io.listen(3000);
+            server = IO();
+            server.listen(3000);
         });
         afterEach(() => {
             socket.close();
-            io.close();
+            server.close();
         });
 
         it("1", (done) => {
-            const testRouter: router.Router = router();
-            testRouter.use("test", (io: SocketIO.Server, socket: Socket, path: string, params: any[], ack: ((...params: any[]) => any) | undefined, next: (err?: any) => any) => {
+            const routerContext = new RouterContext();
+            routerContext.use<[string]>("test", (socket: Socket, event: string, params: [string], ack: ((...params: any[]) => any) | undefined, next: (err?: any) => any) => {
                 ack && ack(params[0]);
             });
-            io.use(testRouter);
+            server.use(createRouter(routerContext));
             socket = client("http://localhost:3000");
             socket.emit("test", "test", (msg: string) => {
                 expect(msg).to.be.equal("test");
@@ -36,14 +36,14 @@ describe("Test Router", () => {
         });
 
         it("2", (done) => {
-            const testRouter = router();
-            testRouter.use("test", (io: SocketIO.Server, socket: Socket, path: string, params: any[], ack: ((...params: any[]) => any) | undefined, next: (err?: any) => any) => {
+            const routerContext = new RouterContext();
+            routerContext.use<[string]>("test", (socket: Socket, event: string, params: [string], ack: Ack | undefined, next: (err?: any) => any) => {
                 next(new Error('error'));
             });
-            testRouter.use((io: SocketIO.Server, socket: Socket, err: any, ack: ((...params: any[]) => any) | undefined) => {
+            routerContext.use((socket: Socket, err: any, ack: ((...params: any[]) => any) | undefined) => {
                 ack && ack(err.message);
             });
-            io.use(testRouter);
+            server.use(createRouter(routerContext));
             socket = client("http://localhost:3000");
             socket.emit("test", "test", (msg: string) => {
                 expect(msg).to.be.equal("error");
@@ -53,23 +53,23 @@ describe("Test Router", () => {
     });
 
     describe('onConnect', () => {
-        let io: SocketIO.Server;
+        let server: Server;
         let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            io = Server();
-            io.listen(3000);
+            server = IO();
+            server.listen(3000);
         });
         afterEach(() => {
             socket.close();
-            io.close();
+            server.close();
         });
 
         it("1", (done) => {
-            const testRouter = router();
-            testRouter.onConnect((io: SocketIO.Server, socket: Socket, next: (err?: any) => any) => {
+            const routerContext = new RouterContext();
+            routerContext.onConnect((socket: Socket, next: (err?: any) => any) => {
                 socket.emit("test", "test")
             });
-            io.use(testRouter);
+            server.use(createRouter(routerContext));
             socket = client("http://localhost:3000");
             socket.on("test", (msg: string) => {
                 expect(msg).to.be.equal("test");
@@ -79,23 +79,24 @@ describe("Test Router", () => {
     });
 
     describe('onDisconnect', () => {
-        let io: SocketIO.Server;
+        let server: Server;
         let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            io = Server();
-            io.listen(3000);
+            server = IO();
+            server.listen(3000);
         });
         afterEach(() => {
-            io.close();
+            server.close();
         });
 
         it("1", (done) => {
             socket = client("http://localhost:3000");
-            const testRouter = router();
-            testRouter.onDisconnect((io: SocketIO.Server, socket: Socket, reason: string | undefined, next: (err?: any) => any) => {
+            const routerContext = new RouterContext();
+            routerContext.onDisconnect((socket: Socket, reason: Reason | undefined, next: Next) => {
+                console.log({reason})
                 done();
             });
-            io.use(testRouter);
+            server.use(createRouter(routerContext));
             socket.on("connect", () => {
                 socket.close();
             });
