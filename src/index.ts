@@ -1,4 +1,4 @@
-import {Packet, Socket} from "socket.io";
+import {Socket} from "socket.io";
 import * as wildcard from "micromatch"
 
 export type Ack = (...params: any[]) => void;
@@ -45,11 +45,10 @@ class RouterContext{
     };
 }
 
-function handle<T extends any[]>(context: RouterContext, packet: Packet, socket: Socket)  {
-    const event: string = packet[0];
-    const last = packet[packet.length - 1];
+function handle<T extends any[]>(context: RouterContext, event: string, args: ReadonlyArray<any>, socket: Socket)  {
+    const last = args[args.length - 1];
     const ack: Ack | undefined = last instanceof Function ? last : undefined;
-    const params: T = (ack ? packet.slice(1, packet.length - 1) : packet.slice(1, packet.length)) as T;
+    const params: T = (ack ? args.slice(0, args.length - 1) : args.slice(0, args.length)) as T;
     const foundEvents = Array.from(context.routers.keys()).filter((routerEvent)=>{
         return  routerEvent === event || wildcard.isMatch(routerEvent, event)
     });
@@ -75,11 +74,10 @@ function getNext(context: RouterContext, socket: Socket, ack?: Ack ) {
 }
 
 function router(context: RouterContext, socket: Socket, next: Next) {
-
     connect(context, socket, getNext(context, socket));
 
-    socket.use((packet: Packet, next: Next) => {
-        handle(context, packet, socket);
+    socket.use(([ event, ...args ], next: Next) => {
+        handle(context, event, args, socket);
         next();
     });
 

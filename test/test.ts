@@ -1,5 +1,4 @@
 import {Ack, createRouter, Next, Reason, RouterContext} from "../src";
-import * as IO from "socket.io";
 import * as client from 'socket.io-client';
 import * as chai from "chai";
 import {Socket, Server} from "socket.io";
@@ -14,8 +13,8 @@ describe("Test Router", () => {
         let server: Server;
         let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            server = IO();
-            server.listen(3000);
+            server = new Server();
+            server.listen(3000, {allowEIO3: true});
         });
         afterEach(() => {
             socket.close();
@@ -56,8 +55,8 @@ describe("Test Router", () => {
         let server: Server;
         let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            server = IO();
-            server.listen(3000);
+            server = new Server();
+            server.listen(3000, {allowEIO3: true});
         });
         afterEach(() => {
             socket.close();
@@ -82,8 +81,8 @@ describe("Test Router", () => {
         let server: Server;
         let socket: SocketIOClient.Socket;
         beforeEach(() => {
-            server = IO();
-            server.listen(3000);
+            server = new Server();
+            server.listen(3000, {allowEIO3: true});
         });
         afterEach(() => {
             server.close();
